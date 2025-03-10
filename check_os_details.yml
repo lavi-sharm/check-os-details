@@ -1,0 +1,15 @@
+---
+- name: Gather OS Details
+  hosts: servers
+  gather_facts: yes
+  tasks:
+    - name: Display OS Information
+      debug:
+        msg: 
+          - "OS: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+          - "Kernel: {{ ansible_kernel }}"
+          - "Architecture: {{ ansible_architecture }}"
+          - "Hostname: {{ ansible_hostname }}"
+          - "Processor: {{ ansible_processor[1] }}"
+          - "Total Memory: {{ ansible_memtotal_mb }} MB"
+          - "IP Address: {{ ansible_default_ipv4.address }}"
