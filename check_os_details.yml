@@ -15,7 +15,7 @@
           - "IP Address: {{ ansible_default_ipv4.address | default('N/A') }}"
 
     - name: Check if UFW is active (Ubuntu/Debian)
-      command: sudo ufw status
+      command: ufw status
       register: ufw_status
       ignore_errors: yes
       become: yes
