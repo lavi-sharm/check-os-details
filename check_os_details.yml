@@ -46,3 +46,13 @@
     - name: Display iptables Rules
       debug:
         msg: "{{ iptables_status.stdout }}"
+
+    - name: Check SELinux status
+      command: sestatus
+      register: selinux_status
+      ignore_errors: yes
+
+    - name: Display SELinux Status
+      debug:
+        msg: "SELinux Status: {{ selinux_status.stdout }}"
+
