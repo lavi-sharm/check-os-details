@@ -14,3 +14,33 @@
           - "Total Memory: {{ ansible_memtotal_mb }} MB"
           - "IP Address: {{ ansible_default_ipv4.address | default('N/A') }}"
 
+    - name: Check if UFW is active (Ubuntu/Debian)
+      command: ufw status
+      register: ufw_status
+      ignore_errors: yes
+      when: ansible_distribution in ["Ubuntu", "Debian"]
+
+    - name: Display UFW Status
+      debug:
+        msg: "{{ ufw_status.stdout }}"
+      when: ansible_distribution in ["Ubuntu", "Debian"]
+
+    - name: Check if Firewalld is active (RHEL/CentOS)
+      command: systemctl is-active firewalld
+      register: firewalld_status
+      ignore_errors: yes
+      when: ansible_distribution in ["RedHat", "CentOS", "Rocky", "AlmaLinux"]
+
+    - name: Display Firewalld Status
+      debug:
+        msg: "Firewalld Status: {{ firewalld_status.stdout }}"
+      when: ansible_distribution in ["RedHat", "CentOS", "Rocky", "AlmaLinux"]
+
+    - name: Check if iptables is active
+      command: iptables -L
+      register: iptables_status
+      ignore_errors: yes
+
+    - name: Display iptables Rules
+      debug:
+        msg: "{{ iptables_status.stdout }}"
