@@ -2,6 +2,7 @@
 - name: Gather OS Details and Check Firewall Status
   hosts: servers
   gather_facts: yes
+  become: yes
   tasks:
     - name: Display OS Information
       debug:
