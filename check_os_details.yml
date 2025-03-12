@@ -1,8 +1,9 @@
 ---
-- name: Gather OS Details and Check Firewall Status
+- name: Gather OS Details and Check Security Services
   hosts: servers
   gather_facts: yes
   tasks:
+  
     - name: Display OS Information
       debug:
         msg: 
@@ -19,23 +20,24 @@
       register: ufw_status
       ignore_errors: yes
       become: yes
-      when: ansible_distribution in ["Ubuntu", "Debian"]
+      when: ansible_os_family == "Debian"
 
     - name: Display UFW Status
       debug:
-        msg: "{{ ufw_status.stdout }}"
-      when: ansible_distribution in ["Ubuntu", "Debian"]
+        msg: "UFW Status: {{ ufw_status.stdout | default('UFW not installed or inactive') }}"
+      when: ansible_os_family == "Debian"
 
     - name: Check if Firewalld is active (RHEL/CentOS)
       command: systemctl is-active firewalld
       register: firewalld_status
       ignore_errors: yes
-      when: ansible_distribution in ["RedHat", "CentOS", "Rocky", "AlmaLinux"]
+      become: yes
+      when: ansible_os_family == "RedHat"
 
     - name: Display Firewalld Status
       debug:
-        msg: "Firewalld Status: {{ firewalld_status.stdout }}"
-      when: ansible_distribution in ["RedHat", "CentOS", "Rocky", "AlmaLinux"]
+        msg: "Firewalld Status: {{ firewalld_status.stdout | default('Firewalld not installed or inactive') }}"
+      when: ansible_os_family == "RedHat"
 
     - name: Check if iptables is active
       command: iptables -L
@@ -45,14 +47,26 @@
 
     - name: Display iptables Rules
       debug:
-        msg: "{{ iptables_status.stdout }}"
+        msg: "{{ iptables_status.stdout | default('No iptables rules found or command failed') }}"
 
     - name: Check SELinux status
       command: sestatus
       register: selinux_status
       ignore_errors: yes
+      become: yes
+      when: ansible_os_family == "RedHat"
 
     - name: Display SELinux Status
       debug:
-        msg: "SELinux Status: {{ selinux_status.stdout }}"
+        msg: "SELinux Status: {{ selinux_status.stdout | default('SELinux not available') }}"
+      when: ansible_os_family == "RedHat"
 
+    - name: Check if DS-agent is running
+      command: systemctl is-active ds_agent
+      register: ds_agent_status
+      ignore_errors: yes
+      become: yes
+
+    - name: Display DS-agent Status
+      debug:
+        msg: "DS-agent Status: {{ ds_agent_status.stdout | default('DS-agent not installed or inactive') }}"
