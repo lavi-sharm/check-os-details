@@ -28,7 +28,7 @@
 
     - name: Display generated MAC address
       debug:
-        msg: "Generated MAC Address: {{ mac_address.stdout }}"
+        msg: "Generated MAC Address: {{ mac_result.stdout }}"
 
     - name: Ensure VM does not already exist
       command: virsh list --all
@@ -50,4 +50,4 @@
 
     - name: Print status
       debug:
-        msg: "VM {{ vm_name }} created successfully with MAC Address: {{ mac_address.stdout }}"
+        msg: "VM {{ vm_name }} created successfully with MAC Address: {{ mac_result.stdout }}"
