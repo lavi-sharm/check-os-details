@@ -1,7 +1,6 @@
 ---
 - name: Clone QCOW2 Image and Create a VM
   hosts: localhost
-  become: true
   connection: localhost
   vars:
     vm_name: "{{ lookup('env', 'VM_NAME') | default('test-vm', true) }}"
