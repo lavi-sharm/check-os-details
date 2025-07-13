@@ -37,6 +37,7 @@
     - name: Ensure VM does not already exist
       command: virsh list --all
       register: existing_vms
+      check_mode: no
 
     - name: Create VM if it does not exist
       shell: |
@@ -50,7 +51,8 @@
         --import \
         --graphics vnc \
         --noautoconsole
-      when: vm_name not in existing_vms.stdout
+      when: existing_vms.stdout is defined and (vm_name not in existing_vms.stdout)
+
 
     - name: Print status
       debug:
